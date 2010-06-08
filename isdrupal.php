@@ -84,9 +84,7 @@ function curl_http_url_exists($url) {
     $header  = curl_getinfo($ch);
     curl_close($ch);
 		
-		//print_r($header);
-		//print_r($content . "\n");
-		if (!empty($header['http_code']) && ($header['http_code'] > 199 && $header['http_code'] < 399)) {
+		if (!empty($header['http_code']) && ($header['http_code'] > 199 && $header['http_code'] < 400)) {
 			return True;
 		}
 		else {
