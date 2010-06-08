@@ -1,13 +1,13 @@
 #!/usr/bin/env php
-#
-#  A simple PHP script to determine whether a site is running on Drupal.
-#
-#  Created by Irakli Nadareishvili, based on similar shell script by Lasha Dolidze.
-#  Distributed under GPL license v 2.x or later
-#  http://www.gnu.org/licenses/gpl-2.0.html
-#  
-
 <?php
+/**
+*  A simple PHP script to determine whether a site is running on Drupal.
+*
+*  Created by Irakli Nadareishvili, based on similar shell script by Lasha Dolidze.
+*  Distributed under GPL license v 2.x or later
+*  http://www.gnu.org/licenses/gpl-2.0.html
+*/  
+
 error_reporting(E_ERROR | E_PARSE);
 $invalidArguments = False;
 
@@ -37,7 +37,7 @@ $is_drupal = is_drupal($url);
 if (is_numeric($is_drupal)) {
 	exit ("Yes, this appears to be a Drupal site version $is_drupal \n");
 }
-elseif ($is_drupal == True) {
+elseif ($is_drupal === True) {
 	exit ("Yes, this appears to be a Drupal site. Probably version 4 or older. \n");
 }
 else {
@@ -45,14 +45,14 @@ else {
 }
 
 function is_drupal($url) {
-	if (curl_http_url_exists("$url/misc/drupal.js")) { // Definitely a Drupal site	
-		if (curl_http_url_exists("$url/misc/timezone.js")) {
+	if (curl_drupal_url_exists("$url/misc/", "drupal.js")) { // Definitely a Drupal site	
+		if (curl_drupal_url_exists("$url/misc/", "timezone.js")) {
 			return 7;
 		}	
-		elseif (curl_http_url_exists("$url/modules/system/system.js")) {
+		elseif (curl_drupal_url_exists("$url/modules/system/", "system.js")) {
 			return 6;
 		}
-		elseif (curl_http_url_exists("$url/modules/system/system.css")) {
+		elseif (curl_drupal_url_exists("$url/modules/system/", "system.css")) {
 			return 5;
 		}
 		else { // Not sure which version
@@ -64,11 +64,10 @@ function is_drupal($url) {
 	}
 }
 
-function curl_http_url_exists($url) {
+function curl_drupal_url_exists($url, $file) {
     $options = array(
         CURLOPT_RETURNTRANSFER => True,     // return web page
         CURLOPT_HEADER         => True,     // return headers
-				CURLOPT_NOBODY				 => True,			// Don't return body.
         CURLOPT_FOLLOWLOCATION => True,     // follow redirects
 				CURLOPT_MAXREDIRS			 => 5,				// no more than 5 redirects!
         CURLOPT_ENCODING       => "",       // handle all encodings
@@ -78,16 +77,18 @@ function curl_http_url_exists($url) {
         CURLOPT_TIMEOUT        => 120,      // timeout on response
     );
 
-    $ch      = curl_init($url);
+    $ch      = curl_init($url . $file);
     curl_setopt_array($ch, $options);
 		$content = curl_exec($ch);
     $header  = curl_getinfo($ch);
     curl_close($ch);
 		
 		if (!empty($header['http_code']) && ($header['http_code'] > 199 && $header['http_code'] < 400)) {
-			return True;
+			if (strpos($content, "\$Id: $file")) {
+				return True;
+			}
 		}
-		else {
-			return False;
-		}
+
+		return False;
+		
 }
