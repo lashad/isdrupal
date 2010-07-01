@@ -3,13 +3,18 @@
 #
 #  Created by Lasha Dolidze on 03/15/10.
 #  Copyright Picktek LLC 2010. All rights reserved.
-#  Distributed under GPL license v 2.x or later
-#  http://www.gnu.org/licenses/gpl-2.0.html
 #
 
 #!/bin/sh
 
 url=$1
+INPUT=`curl -fsLI $url 2>&1 | egrep "\<^Location: " | sed 's/Location: \(.*\)/\1/'`
+ 
+if [ "$INPUT" != "" ]
+then
+ url=`echo $INPUT | tr -d "\r\n"`
+ echo "URL: $url"
+fi
 
 is_drupal_site() {     
      if curl -fsL $url/misc/drupal.js 2>&1 | grep "drupal.js,v" > /dev/null
