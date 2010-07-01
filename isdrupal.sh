@@ -3,6 +3,8 @@
 #
 #  Created by Lasha Dolidze on 03/15/10.
 #  Copyright Picktek LLC 2010. All rights reserved.
+#  Distributed under GPL license v 2.x or later	 	
+#  http://www.gnu.org/licenses/gpl-2.0.html
 #
 
 #!/bin/sh
