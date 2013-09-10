@@ -19,7 +19,7 @@ then
 fi
 
 is_drupal_site() {     
-     if curl -fsL $url/misc/drupal.js 2>&1 | grep "drupal.js,v" > /dev/null
+     if curl -fsL $url/misc/drupal.js 2>&1 | grep "var Drupal = Drupal" > /dev/null
      then                                                                                                               
         return 0                                                                                                        
      else                                                                                                               
@@ -37,7 +37,7 @@ is_drupal_5() {
 }
 
 is_drupal_6() {
-     if curl -fsL $url/modules/system/system.js 2>&1 | grep "system.js,v" > /dev/null
+     if curl -fsL $url/modules/system/system.js 2>&1 | grep "Drupal.behaviors" > /dev/null
      then
         return 0
      else
@@ -46,7 +46,7 @@ is_drupal_6() {
 }
 
 is_drupal_7() {
-     if curl -fsL $url/misc/timezone.js 2>&1 | grep "timezone.js,v" > /dev/null
+     if curl -fsL $url/misc/timezone.js 2>&1 | grep "Drupal.behaviors.setTimezone" > /dev/null
      then
         return 0
      else
